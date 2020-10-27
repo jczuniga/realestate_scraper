@@ -1,0 +1,44 @@
+
+{
+    "_id": "realestateau",
+    "description": "Scrape all returned listings from realestate.au",
+    "scraper_config": {
+        "_login_url": "",
+        "_auth": "",
+        "main_url": "https://www.realestate.com.au/buy",
+        "xpath": {
+            "uname_input_xpath": ".//input[@name='login[username]']",
+            "pword_input_xpath": ".//input[@name='login[password]']",
+            "search_xpath": "//input[@name='where']",
+            "search_submit_xpath": "//button[@class='rui-search-button']",
+            "link_xpath": "//a[contains(@class, 'details-link')]",
+            "next_xpath": "//a[contains(@class, 'pagination__link-next')]",
+            "address_listing_price_xpath": "//span[contains(@class, 'property-info__price')]",
+            "address_bedrooms_xpath": "//div[@class='hero-poster']//span[contains(@class, 'general-features__beds')]",
+            "address_bathrooms_xpath": "//div[@class='hero-poster']//span[contains(@class, 'general-features__baths')]",
+            "address_car_spaces_xpath": "//div[@class='hero-poster']//span[contains(@class, 'general-features__cars')]",
+            "address_property_type_xpath": "//span[@class='property-info__property-type']",
+            "address_description_xpath": "//span[@class='property-description__content']",
+            "address_full_address_xpath": "//div[@class='hero-poster']//h1"
+        },
+        "headless": false,
+        "disable_images": false,
+        "wait_between": [
+            5,
+            8
+        ],
+        "store": false,
+        "file_headers": [
+            "address_listing_price",
+            "address_bedrooms",
+            "address_bathrooms",
+            "address_car_spaces",
+            "address_property_type",
+            "address_description",
+            "address_full_address",
+            "address_url"
+        ],
+        "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
+        "browser_timeout": 60
+    }
+}
