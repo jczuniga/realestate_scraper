@@ -1,11 +1,11 @@
 
 {
     "_id": "realestateau",
-    "description": "Scrapes all returned listings from realestate.au/buy",
+    "description": "Scrapes all returned listings from realestate.au/sold",
     "scraper_config": {
         "_login_url": "",
         "_auth": "",
-        "main_url": "https://www.realestate.com.au/buy",
+        "main_url": "https://www.realestate.com.au/sold",
         "xpath": {
             "uname_input_xpath": ".//input[@name='login[username]']",
             "pword_input_xpath": ".//input[@name='login[password]']",

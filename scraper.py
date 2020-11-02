@@ -265,6 +265,29 @@ class Scraper(object):
             except NoSuchElementException as e:
                 data['address_full_address'] = None
 
+            try:
+                data['property_size'] = self.driver.find_element_by_xpath(
+                    self.xpath['property_size_xpath']
+                ).text
+            except NoSuchElementException as e:
+                data['property_size'] = None
+
+            try:
+                distances = self.driver.find_elements_by_xpath(
+                    self.xpath['property_distance_from_schools_aggregate_xpath']
+                )
+                dst_agg = list()
+                for distance in distances:
+                    dst = re.sub(r'km', '', distance.text)
+                    dst_agg.append(float(dst))
+                data['property_distance_from_schools_aggregate'] = sum(dst_agg)
+            except NoSuchElementException as e:
+                data['property_distance_from_schools_aggregate'] = None
+
+
+
+
+
             log.info(json.dumps(
                 data,
                 sort_keys=True,
