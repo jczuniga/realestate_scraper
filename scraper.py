@@ -66,7 +66,7 @@ class Scraper(object):
         self.login_url: str = kwargs.get('login_url', None)
         self.main_url = kwargs.get('main_url')
         self.xpath: dict = kwargs.get('xpath')
-        self.proxy: str = kwargs.get('proxy', None)
+        self.proxy: str = kwargs.get('proxy', False)
         self.keyword: str = kwargs.get('keyword', None)
         self.auth: dict = kwargs.get('auth', None)
         self.headless: str = kwargs.get('headless', False)
@@ -106,7 +106,7 @@ class Scraper(object):
             firefox_profile.set_preference('dom.ipc.plugins.enabled.libflashplayer.so', 'false')
             log.info('Image loading disabled..')
 
-            if self.proxy is not None:
+            if self.proxy is True:
                 proxy_ip = random.choice(get_proxies())
                 self.proxy = Proxy({
                     'proxyType': ProxyType.MANUAL,
@@ -115,9 +115,13 @@ class Scraper(object):
                     'sslProxy': proxy_ip,
                     'noProxy': ''
                 })
-
                 log.info(f"Using proxy address {proxy_ip}")
                 time.sleep(2)
+            else:
+                self.proxy = None
+                log.info("Not using any proxy...")
+                time.sleep(2)
+
             web_driver = webdriver.Firefox(
                 firefox_options=self.options,
                 firefox_profile=firefox_profile,
@@ -135,7 +139,7 @@ class Scraper(object):
             if self.user_agent is not None:
                 firefox_profile.set_preference("general.useragent.override", self.user_agent)
 
-            if self.proxy is not None:
+            if self.proxy is True:
                 proxy_ip = random.choice(get_proxies())
                 self.proxy = Proxy({
                     'proxyType': ProxyType.MANUAL,
@@ -144,8 +148,11 @@ class Scraper(object):
                     'sslProxy': proxy_ip,
                     'noProxy': ''
                 })
-
                 log.info(f"Using proxy address {proxy_ip}")
+                time.sleep(2)
+            else:
+                self.proxy = None
+                log.info("Not using any proxy...")
                 time.sleep(2)
 
             web_driver = webdriver.Firefox(
@@ -328,7 +335,7 @@ class Scraper(object):
                 for distance in distances:
                     dst = re.sub(r'km', '', distance.text)
                     dst_agg.append(float(dst))
-                data['property_distance_from_schools_aggregate'] = sum(dst_agg)
+                data['property_distance_from_schools_aggregate'] = round(sum(dst_agg), 2)
             except NoSuchElementException as e:
                 data['property_distance_from_schools_aggregate'] = None
 
