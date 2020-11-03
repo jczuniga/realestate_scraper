@@ -11,7 +11,7 @@
             "pword_input_xpath": ".//input[@name='login[password]']",
             "search_xpath": "//input[@name='where']",
             "search_submit_xpath": "//button[@class='rui-search-button']",
-            "link_xpath": "//a[contains(@class, 'details-link')]",
+            "link_xpath": "//h2//a[contains(@class, 'details-link')]",
             "next_xpath": "//a[contains(@class, 'pagination__link-next')]",
             "address_listing_price_xpath": "//span[contains(@class, 'property-info__price')]",
             "address_bedrooms_xpath": "//div[@class='hero-poster']//span[contains(@class, 'general-features__beds')]",
