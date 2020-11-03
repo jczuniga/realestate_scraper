@@ -3,6 +3,23 @@ import sys
 import csv
 import os
 import json
+from lxml.html import fromstring
+import requests
+from itertools import cycle
+import traceback
+
+
+# module for obtaining a list of free proxy servers from free-proxy-list.net
+def get_proxies() -> list:
+    url = 'https://free-proxy-list.net/'
+    response = requests.get(url)
+    parser = fromstring(response.text)
+    proxies = list()
+    for i in parser.xpath('//tbody/tr')[:10]:
+        if i.xpath('.//td[7][contains(text(),"yes")]'):
+            proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+            proxies.append(proxy)
+    return proxies
 
 
 # simple module to manually set logging configuration

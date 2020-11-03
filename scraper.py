@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -9,9 +10,12 @@ from selenium.common.exceptions import (
     TimeoutException
 )
 from selenium.webdriver.firefox.options import Options
-from util.gen_util import (set_logging, store_to_csv)
+from util.gen_util import (
+    set_logging,
+    store_to_csv,
+    get_proxies
+)
 from typing import (List, Dict)
-
 
 import time
 import itertools
@@ -102,10 +106,23 @@ class Scraper(object):
             firefox_profile.set_preference('dom.ipc.plugins.enabled.libflashplayer.so', 'false')
             log.info('Image loading disabled..')
 
+            if self.proxy is not None:
+                proxy_ip = random.choice(get_proxies())
+                self.proxy = Proxy({
+                    'proxyType': ProxyType.MANUAL,
+                    'httpProxy': proxy_ip,
+                    'ftpProxy': proxy_ip,
+                    'sslProxy': proxy_ip,
+                    'noProxy': ''
+                })
+
+                log.info(f"Using proxy address {proxy_ip}")
+                time.sleep(2)
             web_driver = webdriver.Firefox(
                 firefox_options=self.options,
                 firefox_profile=firefox_profile,
-                log_path=None if self.log_path is None else self.log_path
+                log_path=None if self.log_path is None else self.log_path,
+                proxy=self.proxy
             )
 
             if self.browser_timeout is not None:
@@ -117,10 +134,25 @@ class Scraper(object):
         else:
             if self.user_agent is not None:
                 firefox_profile.set_preference("general.useragent.override", self.user_agent)
+
+            if self.proxy is not None:
+                proxy_ip = random.choice(get_proxies())
+                self.proxy = Proxy({
+                    'proxyType': ProxyType.MANUAL,
+                    'httpProxy': proxy_ip,
+                    'ftpProxy': proxy_ip,
+                    'sslProxy': proxy_ip,
+                    'noProxy': ''
+                })
+
+                log.info(f"Using proxy address {proxy_ip}")
+                time.sleep(2)
+
             web_driver = webdriver.Firefox(
                 firefox_options=self.options,
                 firefox_profile=firefox_profile,
-                log_path=None if self.log_path is None else self.log_path
+                log_path=None if self.log_path is None else self.log_path,
+                proxy=self.proxy
             )
             if self.browser_timeout is not None:
                 web_driver.set_page_load_timeout(self.browser_timeout)
@@ -143,6 +175,7 @@ class Scraper(object):
 
     # First pagination. Only pass-on argument is login_url or main_url
     def paging_task(self) -> list:
+        current_url = ""
         try:
             if self.login_url is not None:
                 self.driver.get(self.login_url)
@@ -162,6 +195,7 @@ class Scraper(object):
 
                 if self.main_url is not None:
                     self.driver.get(self.main_url)
+                    current_url = self.driver.current_url
                 else:
                     pass
             else:
@@ -177,6 +211,8 @@ class Scraper(object):
                 ).click()
                 self.wait_for_page_to_load()
 
+                current_url = self.driver.current_url
+
             # For Pagination
 
             for i in range(int(self.max_num_of_pages)):
@@ -187,16 +223,18 @@ class Scraper(object):
                 ]
                 for url in url_list:
                     self.get_content(link=url)
-                    log.info("Navigating back...")
-                    self.driver.back()
+                    # log.info("Navigating back...")
+                    # self.driver.back()
                     # self.paging_task_links.append(url_list)
 
+                self.driver.get(current_url)
                 try:
                     self.driver.find_element_by_xpath(self.xpath['next_xpath']).click()
                     a, b = self.wait_between
                     wait_between = random.randint(a, b)
                     log.info(f"Waiting {wait_between} seconds in between loads..")
                     time.sleep(wait_between)
+                    current_url = self.driver.current_url
                 except NoSuchElementException or ElementNotInteractableException as ee:
                     log.info('No next page found. End of pagination..')
                     break
@@ -224,23 +262,29 @@ class Scraper(object):
                 data['address_listing_price'] = None
 
             try:
-                data['address_bedrooms'] = re.sub(
-                    r'"', '', self.driver.find_element_by_xpath(self.xpath['address_bedrooms_xpath']).text
+                data['address_bedrooms'] = int(
+                    re.sub(
+                        r'"', '', self.driver.find_element_by_xpath(self.xpath['address_bedrooms_xpath']).text
                 )
+            )
             except NoSuchElementException as e:
                 data['address_bedrooms'] = None
 
             try:
-                data['address_bathrooms'] = re.sub(
-                    r'"', '', self.driver.find_element_by_xpath(self.xpath['address_bathrooms_xpath']).text
+                data['address_bathrooms'] = int(
+                    re.sub(
+                        r'"', '', self.driver.find_element_by_xpath(self.xpath['address_bathrooms_xpath']).text
                 )
+            )
             except NoSuchElementException as e:
                 data['address_bathrooms'] = None
 
             try:
-                data['address_car_spaces'] = re.sub(
-                    r'"', '', self.driver.find_element_by_xpath(self.xpath['address_car_spaces_xpath']).text
+                data['address_car_spaces'] = int(
+                    re.sub(
+                        r'"', '', self.driver.find_element_by_xpath(self.xpath['address_car_spaces_xpath']).text
                 )
+            )
             except NoSuchElementException as e:
                 data['address_car_spaces'] = None
 
@@ -266,9 +310,13 @@ class Scraper(object):
                 data['address_full_address'] = None
 
             try:
-                data['property_size'] = self.driver.find_element_by_xpath(
-                    self.xpath['property_size_xpath']
-                ).text
+                data['property_size'] = float(
+                    "".join(
+                        re.findall(
+                            r'[0-9]+', self.driver.find_element_by_xpath(self.xpath['property_size_xpath']).text
+                        )
+                    )
+                )
             except NoSuchElementException as e:
                 data['property_size'] = None
 
@@ -283,9 +331,6 @@ class Scraper(object):
                 data['property_distance_from_schools_aggregate'] = sum(dst_agg)
             except NoSuchElementException as e:
                 data['property_distance_from_schools_aggregate'] = None
-
-
-
 
 
             log.info(json.dumps(
