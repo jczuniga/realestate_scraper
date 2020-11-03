@@ -21,7 +21,8 @@
             "address_description_xpath": "//span[@class='property-description__content']",
             "address_full_address_xpath": "//div[@class='hero-poster']//h1",
             "property_size_xpath": "//div[contains(@class, 'property-size')]",
-            "property_distance_from_schools_aggregate_xpath": "//span[@class='nearby-schools__distance']/p"
+            "property_distance_from_schools_aggregate_xpath": "//span[@class='nearby-schools__distance']/p",
+            "year_sold_xpath": "//*[contains(text(), 'Sold on')]"
         },
         "headless": false,
         "disable_images": false,
@@ -44,6 +45,6 @@
         ],
         "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
         "browser_timeout": 60,
-        "proxy": true
+        "_proxy": true
     }
 }

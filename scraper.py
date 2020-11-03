@@ -332,6 +332,16 @@ class Scraper(object):
             except NoSuchElementException as e:
                 data['property_distance_from_schools_aggregate'] = None
 
+            try:
+                data['year_sold'] = int(
+                    "".join(
+                        re.findall(
+                            r'[0-9]{4}', self.driver.find_element_by_xpath(self.xpath['year_sold_xpath']).text
+                        )
+                    )
+                )
+            except NoSuchElementException as e:
+                data['year_sold'] = None
 
             log.info(json.dumps(
                 data,
