@@ -36,7 +36,7 @@ def set_logging() -> logging:
 
 # CSV store util
 def store_to_csv(data: dict, outfile: str, headers: list) -> None:
-    with open(outfile, 'a') as writeFile:
+    with open(outfile, 'a', encoding="utf8") as writeFile:
         headers = headers
         writer = csv.DictWriter(writeFile, delimiter=',', lineterminator='\n', fieldnames=headers)
         if writeFile.tell() == 0:
