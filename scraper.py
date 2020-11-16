@@ -17,6 +17,7 @@ from util.gen_util import (
 )
 from typing import (List, Dict)
 
+import dateparser
 import time
 import itertools
 import logging
@@ -340,15 +341,19 @@ class Scraper(object):
                 data['property_distance_from_schools_aggregate'] = None
 
             try:
-                data['year_sold'] = int(
-                    "".join(
-                        re.findall(
-                            r'[0-9]{4}', self.driver.find_element_by_xpath(self.xpath['year_sold_xpath']).text
-                        )
-                    )
-                )
+                data['year_sold'] = dateparser.parse(
+                        re.sub(r'Sold on ', '', self.driver.find_element_by_xpath(self.xpath['date_xpath']).text)
+                    ).year
             except NoSuchElementException as e:
                 data['year_sold'] = None
+
+
+            try:
+                data['month_sold'] = dateparser.parse(
+                        re.sub(r'Sold on ', '', self.driver.find_element_by_xpath(self.xpath['date_xpath']).text)
+                    ).month
+            except NoSuchElementException as e:
+                data['month_sold'] = None
 
             log.info(json.dumps(
                 data,

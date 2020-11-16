@@ -13,16 +13,16 @@
             "search_submit_xpath": "//button[@class='rui-search-button']",
             "link_xpath": "//h2//a[contains(@class, 'details-link')]",
             "next_xpath": "//a[contains(@class, 'pagination__link-next')]",
-            "address_listing_price_xpath": "//span[contains(@class, 'property-info__price')]",
+            "address_listing_price_xpath": "//*[contains(@class, 'property-info__price') or contains(@class, 'project-overview__price-range')]",
             "address_bedrooms_xpath": "(//span[contains(@class, 'general-features__beds')])[1]",
             "address_bathrooms_xpath": "(//span[contains(@class, 'general-features__baths')])[1]",
             "address_car_spaces_xpath": "(//span[contains(@class, 'general-features__cars')])[1]",
-            "address_property_type_xpath": "//span[@class='property-info__property-type']",
-            "address_description_xpath": "//span[@class='property-description__content']",
+            "address_property_type_xpath": "//span[@class='property-info__property-type']|//*[contains(@class, 'property-types')]/div[@class='project-key-info__content']",
+            "address_description_xpath": "//span[@class='property-info__property-type']|//div[@class='project-description']",
             "address_full_address_xpath": "//h1",
             "property_size_xpath": "//div[contains(@class, 'property-size')]",
             "property_distance_from_schools_aggregate_xpath": "//span[@class='nearby-schools__distance']/p",
-            "year_sold_xpath": "//*[contains(text(), 'Sold on')]"
+            "date_xpath": "//*[contains(text(), 'Sold on')]"
         },
         "headless": false,
         "disable_images": false,
@@ -42,7 +42,8 @@
             "address_url",
             "property_size",
             "property_distance_from_schools_aggregate",
-            "year_sold"
+            "year_sold",
+            "month_sold"
         ],
         "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
         "browser_timeout": 60,
