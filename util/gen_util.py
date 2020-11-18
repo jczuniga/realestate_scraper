@@ -7,6 +7,7 @@ from lxml.html import fromstring
 import requests
 from itertools import cycle
 import traceback
+import re
 
 
 # module for obtaining a list of free proxy servers from free-proxy-list.net
@@ -56,3 +57,29 @@ def load_json_config(config_file: json) -> dict:
 
     except Exception as e:
         print(f"Error in loading config file. {e}")
+
+
+# function for converting string number to int
+def convert_str_to_number(x: str) -> list:
+    extracted_str = re.findall(r'[\d.,K,k,M,m]+', x, re.IGNORECASE)
+    cleaned_str = [r.strip().replace(",", "") for r in extracted_str]
+    total_stars = 0
+    num_map = {'K': 1000, 'M': 1000000, 'B': 1000000000}
+    converted = []
+    if len(cleaned_str) > 1:
+        for x in cleaned_str:
+            if x.isdigit():
+                converted.append(int(x))
+            else:
+                if len(x) > 1:
+                    total_stars = int(x[:-1]) * num_map.get(x[-1].upper(), 1)
+                    converted.append(total_stars)
+    else:
+        if x.isdigit():
+            converted.append(int(''.join(cleaned_str)))
+        else:
+            if len(x) > 1:
+                total_stars = int(x[:-1]) * num_map.get(x[-1].upper(), 1)
+                converted.append(total_stars)
+
+    return converted
