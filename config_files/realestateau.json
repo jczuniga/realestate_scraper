@@ -18,7 +18,7 @@
             "address_bathrooms_xpath": "(//span[contains(@class, 'general-features__baths')])[1]",
             "address_car_spaces_xpath": "(//span[contains(@class, 'general-features__cars')])[1]",
             "address_property_type_xpath": "//span[@class='property-info__property-type']|//*[contains(@class, 'property-types')]/div[@class='project-key-info__content']",
-            "address_description_xpath": "//span[@class='property-info__property-type']|//div[@class='project-description']",
+            "address_description_xpath": "//span[@class='property-description__content']",
             "address_full_address_xpath": "//h1",
             "property_size_xpath": "//div[contains(@class, 'property-size')]",
             "property_distance_from_schools_aggregate_xpath": "//span[@class='nearby-schools__distance']/p",
