@@ -269,13 +269,16 @@ class Scraper(object):
                     self.xpath['address_listing_price_xpath']
                 ).text
                 cleaned_price = convert_str_to_number(extracted_price)
-                if cleaned_price is not None:
-                    if len(cleaned_price) > 1:
-                        data['address_listing_price_high'] = max(cleaned_price)
-                        data['address_listing_price_low'] = min(cleaned_price)
+                if len(cleaned_price) != 0:
+                    if max(cleaned_price) < 10000:
+                        data['address_listing_price_high'] = extracted_price
                     else:
-                        data['address_listing_price_high'] = int(''.join(cleaned_price))
-                        data['address_listing_price_low'] = None
+                        if len(cleaned_price) > 1:
+                            data['address_listing_price_high'] = max(cleaned_price)
+                            data['address_listing_price_low'] = min(cleaned_price)
+                        else:
+                            data['address_listing_price_high'] = int(''.join([str(x) for x in cleaned_price]))
+                            data['address_listing_price_low'] = None
                 else:
                     data['address_listing_price_high'] = extracted_price
             except NoSuchElementException as e:
