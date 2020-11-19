@@ -275,7 +275,7 @@ class Scraper(object):
                     else:
                         if len(cleaned_price) > 1:
                             data['address_listing_price_high'] = max(cleaned_price)
-                            data['address_listing_price_low'] = min(cleaned_price)
+                            data['address_listing_price_low'] = min(cleaned_price) if min(cleaned_price) > 10000 else None
                         else:
                             data['address_listing_price_high'] = int(''.join([str(x) for x in cleaned_price]))
                             data['address_listing_price_low'] = None
