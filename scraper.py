@@ -13,7 +13,8 @@ from selenium.webdriver.firefox.options import Options
 from util.gen_util import (
     set_logging,
     store_to_csv,
-    get_proxies
+    get_proxies,
+    convert_str_to_number
 )
 from typing import (List, Dict)
 
@@ -262,12 +263,23 @@ class Scraper(object):
             self.driver.get(link)
 
             data['address_url'] = self.driver.current_url
+
             try:
-                data['address_listing_price'] = self.driver.find_element_by_xpath(
+                extracted_price = self.driver.find_element_by_xpath(
                     self.xpath['address_listing_price_xpath']
                 ).text
+                cleaned_price = convert_str_to_number(extracted_price)
+                if cleaned_price is not None:
+                    if len(cleaned_price) > 1:
+                        data['address_listing_price_high'] = max(cleaned_price)
+                        data['address_listing_price_low'] = min(cleaned_price)
+                    else:
+                        data['address_listing_price_high'] = int(''.join(cleaned_price))
+                        data['address_listing_price_low'] = None
+                else:
+                    data['address_listing_price_high'] = extracted_price
             except NoSuchElementException as e:
-                data['address_listing_price'] = None
+                data['address_listing_high'] = data['address_listing_price_low'] = None
 
             try:
                 data['address_bedrooms'] = int(
