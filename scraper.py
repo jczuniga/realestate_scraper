@@ -282,7 +282,7 @@ class Scraper(object):
                 else:
                     data['address_listing_price_high'] = extracted_price
             except NoSuchElementException as e:
-                data['address_listing_high'] = data['address_listing_price_low'] = None
+                data['address_listing_price_high'] = data['address_listing_price_low'] = None
 
             try:
                 data['address_bedrooms'] = int(
