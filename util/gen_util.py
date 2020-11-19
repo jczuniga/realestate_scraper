@@ -60,7 +60,7 @@ def load_json_config(config_file: json) -> dict:
 
 
 # function for converting string number to int
-def convert_str_to_number(x: str) -> list:
+def convert_str_to_number(x):
     extracted_str = re.findall(r'[\d.,K,k,M,m]+', x, re.IGNORECASE)
     cleaned_str = [r.strip().replace(",", "") for r in extracted_str]
     total_stars = 0
@@ -75,11 +75,11 @@ def convert_str_to_number(x: str) -> list:
                     total_stars = int(x[:-1]) * num_map.get(x[-1].upper(), 1)
                     converted.append(total_stars)
     else:
-        if x.isdigit():
+        if ''.join(cleaned_str).isdigit():
             converted.append(int(''.join(cleaned_str)))
         else:
-            if len(x) > 1:
-                total_stars = int(x[:-1]) * num_map.get(x[-1].upper(), 1)
+            if len(''.join(cleaned_str)) > 1:
+                total_stars = int(''.join(cleaned_str)[:-1]) * num_map.get(''.join(cleaned_str)[-1].upper(), 1)
                 converted.append(total_stars)
 
     return converted
